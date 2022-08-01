@@ -1,3 +1,7 @@
+/*
+    Copyright (C) 2022 TheTrustedComputer
+*/
+
 #include "onetwoeight.h"
 
 OneTwoEight_t OneTwoEight_numberOfBits(OneTwoEight NUM) {

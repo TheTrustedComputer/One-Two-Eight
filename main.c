@@ -1,3 +1,7 @@
+/*
+    Copyright (C) 2022 TheTrustedComputer
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
