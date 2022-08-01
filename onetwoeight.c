@@ -15,22 +15,22 @@ OneTwoEight_t OneTwoEight_numberOfBits(OneTwoEight NUM) {
 
 OneTwoEight OneTwoEight_add(const OneTwoEight LEFT, const OneTwoEight RIGHT) {
     OneTwoEight_t sumLSB, sumMSB;
-
+    
     // Add
     sumLSB = LEFT.lsb + RIGHT.lsb;
     sumMSB = LEFT.msb + RIGHT.msb + (sumLSB < LEFT.lsb); // Check LSB overflow, then carry to MSB; in C, a true is 1; a false is 0.
-
+    
     // Return sum
     return (OneTwoEight){sumLSB, sumMSB};
 }
 
 OneTwoEight OneTwoEight_subtract(const OneTwoEight LEFT, const OneTwoEight RIGHT) {
     OneTwoEight_t diffLSB, diffMSB;
-
+    
     // Subtract
     diffLSB = LEFT.lsb - RIGHT.lsb;
     diffMSB = LEFT.msb - RIGHT.msb - (diffLSB > LEFT.lsb); // Check LSB underflow, then borrow from MSB
-
+    
     // Return difference
     return (OneTwoEight){diffLSB, diffMSB};
 }
@@ -40,7 +40,7 @@ OneTwoEight OneTwoEight_multiply(const OneTwoEight LEFT, const OneTwoEight RIGHT
     OneTwoEight_t firstProd, secondProd, thirdProd, fourthProd;
     OneTwoEight_t firstPart, secondPart;
     OneTwoEight_t least64ProdBits, most64ProdBits;
-
+    
     // The result of multiplication of N bit integers is in 2N bits
     // 64x64 = 128-bit product
     // 128x128 = 256-bit product
@@ -49,21 +49,21 @@ OneTwoEight OneTwoEight_multiply(const OneTwoEight LEFT, const OneTwoEight RIGHT
     leftLSBM = LEFT.lsb >> 32;
     rightLSBL = RIGHT.lsb & UINT32_MAX;
     rightLSBM = RIGHT.lsb >> 32;
-
+    
     // Multiply partial products
     firstProd = leftLSBL * rightLSBL;
     secondProd = leftLSBL * rightLSBM;
     thirdProd = leftLSBM * rightLSBL;
     fourthProd = leftLSBM * rightLSBM;
-
+    
     // Get lower and higher 32-bit parts of 64-bit products and add them, taking into account carries and overflows
     firstPart = (firstProd >> 32) + thirdProd;
     secondPart = (firstPart & UINT32_MAX) + secondProd;
-
+    
     // Combine them together; we now have a truncated 128-bit product
     least64ProdBits = (firstProd & UINT32_MAX) + (secondPart << 32);
     most64ProdBits = (fourthProd + (firstPart >> 32) + (secondPart >> 32)) + (LEFT.lsb * RIGHT.msb) + (LEFT.msb * RIGHT.lsb);
-
+    
     // Return that product
     return (OneTwoEight){least64ProdBits, most64ProdBits};
 }
@@ -72,13 +72,13 @@ OneTwoEight OneTwoEight_divide(const OneTwoEight LEFT, const OneTwoEight RIGHT, 
     // Division is usually the slowest basic operation of any integer type
     OneTwoEight quot, rem;
     OneTwoEight_t bitsLeft;
-
+    
     // Check for zero divisor, a classic undefined mathematical operation
     if (!OneTwoEight_toBool(RIGHT)) {
         fprintf(stderr, "Division by zero.\n");
         exit(EXIT_FAILURE);
     }
-
+    
     // Prepare quotient and remainder for binary long division
     quot = rem = ONETWOEIGHT_ZERO;
     
@@ -102,7 +102,7 @@ OneTwoEight OneTwoEight_divide(const OneTwoEight LEFT, const OneTwoEight RIGHT, 
     if (USE_REM && REM_128) {
         *REM_128 = rem;
     }
-
+    
     // Return the quotient
     return quot;
 }
@@ -420,7 +420,7 @@ void OneTwoEight_print(const OneTwoEight NUM, const bool SIGN) {
     OneTwoEight basePrint = NUM, baseDigit;
     int digit128Index = 0, digits128[39];
     bool negative = SIGN && (NUM.msb & 0x8000000000000000ull);
-
+    
     // Print only LSB if MSB is non-zero
     if (NUM.msb) {
         // Print negative sign when the highest bit of MSB is set

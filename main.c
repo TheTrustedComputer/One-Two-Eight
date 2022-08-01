@@ -9,7 +9,6 @@
 #include <inttypes.h>
 #include <string.h>
 #include <limits.h>
-#include <time.h>
 
 #include "mt19937-64.h"
 #include "onetwoeight.c"
@@ -28,11 +27,11 @@ int main(void) {
     bool cond, _cond;
     FILE *unixSeeder = fopen("/dev/random", "r"); // Unix only RNG seed source, will not compile on Windows
     fread(&seedVal, sizeof(seedVal), 1, unixSeeder);
-
+    
     // Initialize the PRNG
     init_genrand64(seedVal);
     fclose(unixSeeder);
-
+    
     for (;;) {
         // Fill with random numbers
         a.lsb = genrand64_int64();
@@ -45,11 +44,11 @@ int main(void) {
         _b = b.lsb | ((UInt128b)(b.msb) << 64);
         _c = c.lsb | ((UInt128b)(c.msb) << 64);
         cond = _cond = false;
-
+        
         // Randomize operations
         operation = genrand64_int64() % 34;
         shift = genrand64_int64() % 128;
-
+        
         // Do this operation based on RNG result
         switch (operation) {
         case 0: // Add
@@ -200,7 +199,7 @@ int main(void) {
             cond = OneTwoEight_greaterThanEqual(a, b);
             _cond = _a >= _b;
         }
-
+        
         // Verify the results and error out if answers are different from what is expected.
         // This if statement should never be executed when coded properly, and the hardware is in working order.
         // If this occurs for whatever reason, either the running hardware is faulty, or the compiler is bugged.
