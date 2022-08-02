@@ -6,7 +6,7 @@
 
 OneTwoEight_t OneTwoEight_numberOfBits(OneTwoEight NUM) {
     OneTwoEight_t loggo = 1;
-    while (OneTwoEight_greaterThan(NUM, ONETWOEIGHT_ONE)) {
+    while (OneTwoEight_toBool(NUM)) {
         OneTwoEight_rightShiftAssign(&NUM, 1);
         ++loggo;
     }
