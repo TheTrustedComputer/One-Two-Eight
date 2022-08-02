@@ -33,14 +33,14 @@ OneTwoEight_t OneTwoEight_numberOfBits(OneTwoEight); // Tally up number of bits 
 OneTwoEight OneTwoEight_add(const OneTwoEight, const OneTwoEight); // (a + b)
 OneTwoEight OneTwoEight_subtract(const OneTwoEight, const OneTwoEight); // (a - b)
 OneTwoEight OneTwoEight_multiply(const OneTwoEight, const OneTwoEight); // (a * b)
-OneTwoEight OneTwoEight_divide(const OneTwoEight, const OneTwoEight, const bool, OneTwoEight*); // (a / b)
-OneTwoEight OneTwoEight_modulus(const OneTwoEight, const OneTwoEight, OneTwoEight*); // (a % b)
+OneTwoEight OneTwoEight_divide(OneTwoEight, OneTwoEight, const bool, OneTwoEight*); // (a / b)
+OneTwoEight OneTwoEight_modulus(OneTwoEight, OneTwoEight, OneTwoEight*); // (a % b)
 // Arithmetic with assignment
 void OneTwoEight_addAssign(OneTwoEight*, const OneTwoEight); // (a += b)
 void OneTwoEight_subtractAssign(OneTwoEight*, const OneTwoEight); // (a -= b)
 void OneTwoEight_multiplyAssign(OneTwoEight*, const OneTwoEight); // (a *= b)
-void OneTwoEight_divideAssign(OneTwoEight*, const OneTwoEight); // (a /= b)
-void OneTwoEight_modulusAssign(OneTwoEight*, const OneTwoEight, OneTwoEight*); // (a %= b)
+void OneTwoEight_divideAssign(OneTwoEight*, OneTwoEight); // (a /= b)
+void OneTwoEight_modulusAssign(OneTwoEight*, OneTwoEight, OneTwoEight*); // (a %= b)
 // Bitwise
 OneTwoEight OneTwoEight_bitwiseAnd(const OneTwoEight, const OneTwoEight); // (a & b)
 OneTwoEight OneTwoEight_bitwiseOr(const OneTwoEight, const OneTwoEight); // (a | b)

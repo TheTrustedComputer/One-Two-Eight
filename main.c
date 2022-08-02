@@ -31,12 +31,12 @@ int main(void) {
     
     for (;;) {
         // Fill with random numbers
-        a.lsb = rand() | ((OneTwoEight_t)(rand()) << 32);
-        a.msb = rand() | ((OneTwoEight_t)(rand()) << 32);
-        b.lsb = rand() | ((OneTwoEight_t)(rand()) << 32);
-        b.msb = rand() | ((OneTwoEight_t)(rand()) << 32);
-        c.lsb = rand() | ((OneTwoEight_t)(rand()) << 32);
-        c.msb = rand() | ((OneTwoEight_t)(rand()) << 32);
+        a.lsb = rand() | (((OneTwoEight_t)(rand()) & 1) << 31) | ((OneTwoEight_t)(rand()) << 32) | (((OneTwoEight_t)(rand()) & 1) << 63);
+        a.msb = rand() | (((OneTwoEight_t)(rand()) & 1) << 31) | ((OneTwoEight_t)(rand()) << 32) | (((OneTwoEight_t)(rand()) & 1) << 63);
+        b.lsb = rand() | (((OneTwoEight_t)(rand()) & 1) << 31) | ((OneTwoEight_t)(rand()) << 32) | (((OneTwoEight_t)(rand()) & 1) << 63);
+        b.msb = rand() | (((OneTwoEight_t)(rand()) & 1) << 31) | ((OneTwoEight_t)(rand()) << 32) | (((OneTwoEight_t)(rand()) & 1) << 63);
+        c.lsb = rand() | (((OneTwoEight_t)(rand()) & 1) << 31) | ((OneTwoEight_t)(rand()) << 32) | (((OneTwoEight_t)(rand()) & 1) << 63);
+        c.msb = rand() | (((OneTwoEight_t)(rand()) & 1) << 31) | ((OneTwoEight_t)(rand()) << 32) | (((OneTwoEight_t)(rand()) & 1) << 63);
         _a = a.lsb | ((UInt128b)(a.msb) << 64);
         _b = b.lsb | ((UInt128b)(b.msb) << 64);
         _c = c.lsb | ((UInt128b)(c.msb) << 64);

@@ -5,7 +5,7 @@
 #include "onetwoeight.h"
 
 OneTwoEight_t OneTwoEight_numberOfBits(OneTwoEight NUM) {
-    OneTwoEight_t loggo = 1;
+    OneTwoEight_t loggo = 0;
     while (OneTwoEight_toBool(NUM)) {
         OneTwoEight_rightShiftAssign(&NUM, 1);
         ++loggo;
@@ -68,10 +68,10 @@ OneTwoEight OneTwoEight_multiply(const OneTwoEight LEFT, const OneTwoEight RIGHT
     return (OneTwoEight){least64ProdBits, most64ProdBits};
 }
 
-OneTwoEight OneTwoEight_divide(const OneTwoEight LEFT, const OneTwoEight RIGHT, const bool USE_REM, OneTwoEight *REM_128) {
+OneTwoEight OneTwoEight_divide(OneTwoEight LEFT, OneTwoEight RIGHT, const bool USE_REM, OneTwoEight *REM_128) {
     // Division is usually the slowest basic operation of any integer type
     OneTwoEight quot, rem;
-    OneTwoEight_t bitsLeft;
+    OneTwoEight_t bitsLeft, leftMSBit;
     
     // Check for zero divisor, a classic undefined mathematical operation
     if (!OneTwoEight_toBool(RIGHT)) {
@@ -79,28 +79,54 @@ OneTwoEight OneTwoEight_divide(const OneTwoEight LEFT, const OneTwoEight RIGHT, 
         exit(EXIT_FAILURE);
     }
     
-    // Prepare quotient and remainder for binary long division
+    // Prepare quotient and remainder for division
     quot = rem = ONETWOEIGHT_ZERO;
+    leftMSBit = LEFT.msb & 0x8000000000000000ull;
     
-    // Perform unsigned binary long division algorithm, based on Wikipedia's article on division algorithms
-    // It is adapted to work with this data structure, see https://en.wikipedia.org/wiki/Division_algorithm#Long_division
-    for (bitsLeft = OneTwoEight_numberOfBits(LEFT); bitsLeft-- > 0;) {
-        // rem <<= 1;
-        OneTwoEight_leftShiftAssign(&rem, 1);
-        // rem |= (LEFT >> bitsLeft) & 1;
-        OneTwoEight_bitwiseOrAssign(&rem, OneTwoEight_bitwiseAnd(OneTwoEight_rightShift(LEFT, bitsLeft), ONETWOEIGHT_ONE));
-        // if (rem >= RIGHT) {
-        if (OneTwoEight_greaterThanEqual(rem, RIGHT)) {
-            // quot |= 1 << bitsLeft;
-            OneTwoEight_bitwiseOrAssign(&quot, OneTwoEight_leftShift(ONETWOEIGHT_ONE, bitsLeft));
-            // rem -= RIGHT;
-            OneTwoEight_subtractAssign(&rem, RIGHT);
+    // See if the dividend's MSB is on, and use the slower binary long division algorithm
+    // It is correct for every value of any n-bit integer, unlike the faster one inside the else block
+    if (leftMSBit) {
+        // Perform this algorithm based on Wikipedia's article on division algorithms
+        // It is adapted to work with this data structure, see https://en.wikipedia.org/wiki/Division_algorithm#Long_division
+        for (bitsLeft = OneTwoEight_numberOfBits(LEFT); bitsLeft--;) {
+            // rem <<= 1;
+            OneTwoEight_leftShiftAssign(&rem, 1);
+            // rem |= (LEFT >> bitsLeft) & 1;
+            OneTwoEight_bitwiseOrAssign(&rem, OneTwoEight_bitwiseAnd(OneTwoEight_rightShift(LEFT, bitsLeft), ONETWOEIGHT_ONE));
+            // if (rem >= RIGHT) {
+            if (OneTwoEight_greaterThanEqual(rem, RIGHT)) {
+                // quot |= 1 << bitsLeft;
+                OneTwoEight_bitwiseOrAssign(&quot, OneTwoEight_leftShift(ONETWOEIGHT_ONE, bitsLeft));
+                // rem -= RIGHT;
+                OneTwoEight_subtractAssign(&rem, RIGHT);
+            }
+        }
+        
+    }
+    else { // Use the faster algorithm; it fails with this condition as described in the if condition
+        // Align dividend bits with divisor bits
+        for (bitsLeft = 0; OneTwoEight_greaterThanEqual(LEFT, RIGHT); ++bitsLeft, OneTwoEight_leftShiftAssign(&RIGHT, 1));
+        // Do the division
+        while (bitsLeft--) {
+            // RIGHT >>= 1;
+            OneTwoEight_rightShiftAssign(&RIGHT, 1);
+            // if (LEFT >= RIGHT) {
+            if (OneTwoEight_greaterThanEqual(LEFT, RIGHT)) {
+                // quot = (quot << 1) + 1;
+                quot = OneTwoEight_add(OneTwoEight_leftShift(quot, 1), ONETWOEIGHT_ONE);
+                // LEFT -= RIGHT;
+                OneTwoEight_subtractAssign(&LEFT, RIGHT);
+            }
+            else {
+                // quot <<= 1;
+                OneTwoEight_leftShiftAssign(&quot, 1);
+            }
         }
     }
     
     // See if the caller is requesting the remainder, and avoid null pointer dereferencing
     if (USE_REM && REM_128) {
-        *REM_128 = rem;
+        *REM_128 = leftMSBit ? rem : LEFT;
     }
     
     // Return the quotient
@@ -119,11 +145,11 @@ void OneTwoEight_multiplyAssign(OneTwoEight *assigner, const OneTwoEight RIGHT) 
     *assigner = OneTwoEight_multiply(*assigner, RIGHT);
 }
 
-void OneTwoEight_divideAssign(OneTwoEight *assigner, const OneTwoEight RIGHT) {
+void OneTwoEight_divideAssign(OneTwoEight *assigner, OneTwoEight RIGHT) {
     *assigner = OneTwoEight_divide(*assigner, RIGHT, false, NULL);
 }
 
-void OneTwoEight_modulusAssign(OneTwoEight *assigner, const OneTwoEight RIGHT, OneTwoEight *REM_MOD) {
+void OneTwoEight_modulusAssign(OneTwoEight *assigner, OneTwoEight RIGHT, OneTwoEight *REM_MOD) {
     OneTwoEight_divide(*assigner, RIGHT, true, REM_MOD);
 }
 
