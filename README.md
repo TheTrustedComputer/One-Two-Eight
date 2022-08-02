@@ -6,4 +6,4 @@ Simulate 128-bit integers using a struct housing two uint64_t types on non-suppo
 gcc main.c
 ```
 # Licensing
-Do whatever you want with it.
+You are free to do anything with it.
