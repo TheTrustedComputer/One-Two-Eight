@@ -25,12 +25,9 @@ int main(void) {
     UInt128b _a, _b, _c;
     unsigned long long seedVal, operation, shift, _d, _e, _f[39];
     bool cond, _cond;
-    FILE *unixSeeder = fopen("/dev/random", "r"); // Unix-like only RNG seed source, will not compile on Windows
-    fread(&seedVal, sizeof(seedVal), 1, unixSeeder);
     
     // Initialize the PRNG
     srand(time(NULL));
-    fclose(unixSeeder);
     
     for (;;) {
         // Fill with random numbers
