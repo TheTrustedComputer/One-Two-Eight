@@ -103,7 +103,7 @@ OneTwoEight OneTwoEight_divide(OneTwoEight LEFT, OneTwoEight RIGHT, const bool U
         }
         
     }
-    else { // Use the faster algorithm; it fails with this condition as described in the if condition
+    else { // Use the faster algorithm: https://stackoverflow.com/questions/20637339/binary-long-division-algorithm
         // Align dividend bits with divisor bits
         for (bitsLeft = 0; OneTwoEight_greaterThanEqual(LEFT, RIGHT); ++bitsLeft, OneTwoEight_leftShiftAssign(&RIGHT, 1));
         // Do the division
