@@ -23,7 +23,7 @@ typedef __uint128_t UInt128b;
 int main(void) {
     OneTwoEight a, b, c;
     UInt128b _a, _b, _c;
-    unsigned long long seedVal, operation, shift, _d, _e, _f[39];
+    unsigned long long operation, shift, _d, _e, _f[39];
     bool cond, _cond;
     
     // Initialize the PRNG
