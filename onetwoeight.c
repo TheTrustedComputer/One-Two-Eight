@@ -73,7 +73,7 @@ OneTwoEight OneTwoEight_divide(OneTwoEight LEFT, OneTwoEight RIGHT, const bool U
     // Prepare quotient and remainder for division
     quot = rem = ONETWOEIGHT_ZERO;
     leftMSBit = LEFT.msb & 0x8000000000000000ull;
-    
+
     // See if the dividend's MSB is on, and use the slower binary long division algorithm
     // It is correct for every value of any n-bit integer, unlike the faster one inside the else block
     if (leftMSBit) {
@@ -212,11 +212,22 @@ void OneTwoEight_rightShiftAssign(OneTwoEight *assigner, const int SHIFT_AMOUNT)
     *assigner = OneTwoEight_rightShift(*assigner, SHIFT_AMOUNT);
 }
 
-OneTwoEight OneTwoEight_preIncrement(OneTwoEight *NUM) {
+void OneTwoEight_increment(OneTwoEight *NUM) {
     // Increment LSB then check overflow
     if (!(++NUM->lsb)) {
         ++NUM->msb;
     }
+}
+
+void OneTwoEight_decrement(OneTwoEight *NUM) {
+    // Decrement LSB then check underflow
+    if ((--NUM->lsb) == UINT64_MAX) {
+        --NUM->msb;
+    }
+}
+
+OneTwoEight OneTwoEight_preIncrement(OneTwoEight *NUM) {
+    OneTwoEight_increment(NUM);
     // Return incremented value
     return *NUM;
 }
@@ -224,27 +235,20 @@ OneTwoEight OneTwoEight_preIncrement(OneTwoEight *NUM) {
 OneTwoEight OneTwoEight_postIncrement(OneTwoEight *NUM) {
     // Save old values
     OneTwoEight oldNum = *NUM;
-    if (!(++NUM->lsb)) {
-        ++NUM->msb;
-    }
+    OneTwoEight_increment(NUM);
     // Return old value
     return oldNum;
 }
 
 OneTwoEight OneTwoEight_preDecrement(OneTwoEight *NUM) {
-    // Decrement LSB then check underflow
-    if ((--NUM->lsb) == UINT64_MAX) {
-        --NUM->msb;
-    }
+    OneTwoEight_decrement(NUM);
     // Return decremented value
     return *NUM;
 }
 
 OneTwoEight OneTwoEight_postDecrement(OneTwoEight *NUM) {
     OneTwoEight oldNum = *NUM;
-    if ((--NUM->lsb) == UINT64_MAX) {
-        --NUM->msb;
-    }
+    OneTwoEight_decrement(NUM);
     return oldNum;
 }
 

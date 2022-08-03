@@ -52,6 +52,8 @@ void OneTwoEight_bitwiseXorAssign(OneTwoEight*, const OneTwoEight); // (a ^= b)
 void OneTwoEight_leftShiftAssign(OneTwoEight*, const int); // (a <<= b)
 void OneTwoEight_rightShiftAssign(OneTwoEight*, const int); // (a >>= b)
 // Increment and decrement
+void OneTwoEight_increment(OneTwoEight*); // ++
+void OneTwoEight_decrement(OneTwoEight*); // --
 OneTwoEight OneTwoEight_preIncrement(OneTwoEight*); // (++a)
 OneTwoEight OneTwoEight_postIncrement(OneTwoEight*); // (a++)
 OneTwoEight OneTwoEight_preDecrement(OneTwoEight*); // (--a)
