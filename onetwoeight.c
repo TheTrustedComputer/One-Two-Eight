@@ -73,7 +73,7 @@ OneTwoEight OneTwoEight_divide(OneTwoEight LEFT, OneTwoEight RIGHT, const bool U
     // Prepare quotient and remainder for division
     quot = rem = ONETWOEIGHT_ZERO;
     leftMSBit = LEFT.msb & 0x8000000000000000ull;
-
+    
     // See if the dividend's MSB is on, and use the slower binary long division algorithm
     // It is correct for every value of any n-bit integer, unlike the faster one inside the else block
     if (leftMSBit) {
