@@ -4,15 +4,6 @@
 
 #include "onetwoeight.h"
 
-OneTwoEight_t OneTwoEight_numberOfBits(OneTwoEight NUM) {
-    OneTwoEight_t loggo = 0;
-    while (OneTwoEight_toBool(NUM)) {
-        OneTwoEight_rightShiftAssign(&NUM, 1);
-        ++loggo;
-    }
-    return loggo;
-}
-
 OneTwoEight OneTwoEight_add(const OneTwoEight LEFT, const OneTwoEight RIGHT) {
     OneTwoEight_t sumLSB, sumMSB;
     
@@ -70,7 +61,7 @@ OneTwoEight OneTwoEight_multiply(const OneTwoEight LEFT, const OneTwoEight RIGHT
 
 OneTwoEight OneTwoEight_divide(OneTwoEight LEFT, OneTwoEight RIGHT, const bool USE_REM, OneTwoEight *REM_128) {
     // Division is usually the slowest basic operation of any integer type
-    OneTwoEight quot, rem;
+    OneTwoEight quot, rem, left;
     OneTwoEight_t bitsLeft, leftMSBit;
     
     // Check for zero divisor, a classic undefined mathematical operation
@@ -82,13 +73,16 @@ OneTwoEight OneTwoEight_divide(OneTwoEight LEFT, OneTwoEight RIGHT, const bool U
     // Prepare quotient and remainder for division
     quot = rem = ONETWOEIGHT_ZERO;
     leftMSBit = LEFT.msb & 0x8000000000000000ull;
-    
+
     // See if the dividend's MSB is on, and use the slower binary long division algorithm
     // It is correct for every value of any n-bit integer, unlike the faster one inside the else block
     if (leftMSBit) {
         // Perform this algorithm based on Wikipedia's article on division algorithms
         // It is adapted to work with this data structure, see https://en.wikipedia.org/wiki/Division_algorithm#Long_division
-        for (bitsLeft = OneTwoEight_numberOfBits(LEFT); bitsLeft--;) {
+        // Grab number of bits in dividend
+        for (left = LEFT, bitsLeft = 0; OneTwoEight_toBool(left); OneTwoEight_rightShiftAssign(&left, 1), ++bitsLeft);
+        // Binary long division
+        while (bitsLeft--) {
             // rem <<= 1;
             OneTwoEight_leftShiftAssign(&rem, 1);
             // rem |= (LEFT >> bitsLeft) & 1;
@@ -103,7 +97,7 @@ OneTwoEight OneTwoEight_divide(OneTwoEight LEFT, OneTwoEight RIGHT, const bool U
         }
         
     }
-    else { // Use the faster algorithm: https://stackoverflow.com/questions/20637339/binary-long-division-algorithm
+    else { // Use the faster algorithm: https://courses.cs.vt.edu/~cs1104/BuildingBlocks/divide.030.html
         // Align dividend bits with divisor bits
         for (bitsLeft = 0; OneTwoEight_greaterThanEqual(LEFT, RIGHT); ++bitsLeft, OneTwoEight_leftShiftAssign(&RIGHT, 1));
         // Do the division

@@ -22,9 +22,6 @@ static const OneTwoEight ONETWOEIGHT_UMAX = (OneTwoEight){0xffffffffffffffffull,
 static const OneTwoEight ONETWOEIGHT_ZERO = (OneTwoEight){0x0ull, 0x0ull}; // ONETWOEIGHT_UMIN
 static const OneTwoEight ONETWOEIGHT_ONE = (OneTwoEight){0x1ull, 0x0ull};
 
-/* Helper functions; no lambdas in C */
-OneTwoEight_t OneTwoEight_numberOfBits(OneTwoEight); // Tally up number of bits in a 128-bit integer
-
 /*
     Functions handling all C operators on 128-bit integers
     Operator overloading is only supported in C++, so use operator names for functions
